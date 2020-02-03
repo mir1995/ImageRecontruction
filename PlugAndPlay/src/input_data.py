@@ -26,6 +26,7 @@ class datasetMRI(torch.utils.data.Dataset):
         # plus if you want to add the ones from the test data - but rather keep them separate
         self.filenames = glob.glob(path_data)
         self.transform = transf
+        self.len = len(self.filenames)
 
     def __getitem__(self, index):
         """ 
@@ -42,21 +43,12 @@ class datasetMRI(torch.utils.data.Dataset):
             # print(img_true.size())
 
         return img_true  # return image as an array
-
-
-# think about where to have this - perhaps in trainDNN.py
-PATH_IMG = os.path.join(os.path.sep, os.path.dirname(
-    os.path.dirname(os.path.abspath(__file__))), 'data', 'trainingset', '*.png')
-
-TRANSFORM = torchvision.transforms.Compose(
-    [torchvision.transforms.ToTensor()])   # what does the normalisation do - do not know yet - when is it needed
-
-BATCH_SIZE = 9
-
-# image as tensor object  # i am not doing any validation thing at the moment
-trainset = datasetMRI(PATH_IMG, TRANSFORM)
-trainloader = torch.utils.data.DataLoader(trainset, batch_size=BATCH_SIZE,
-                                          shuffle=True)  # shuffles the data set at each epoch
+    
+    def __len__(self):
+        """
+        Total number of samples in the dataset
+        """
+        return self.len
 
 # get some random training images
 # dataiter = iter(trainloader)
@@ -64,6 +56,20 @@ trainloader = torch.utils.data.DataLoader(trainset, batch_size=BATCH_SIZE,
 
 
 if __name__ == "__main__":
+
+    # think about where to have this - perhaps in trainDNN.py
+    PATH_IMG = os.path.join(os.path.sep, os.path.dirname(
+        os.path.dirname(os.path.abspath(__file__))), 'data', 'trainingset', '*.png')
+
+    TRANSFORM = torchvision.transforms.Compose(
+        [torchvision.transforms.ToTensor()])   # what does the normalisation do - do not know yet - when is it needed
+
+    BATCH_SIZE = 9
+
+    # image as tensor object  # i am not doing any validation thing at the moment
+    trainset = datasetMRI(PATH_IMG, TRANSFORM)
+    trainloader = torch.utils.data.DataLoader(trainset, batch_size=BATCH_SIZE,
+                                              shuffle=True)  # shuffles the data set at each epoch
 
     sample_img = datasetMRI(PATH_IMG)[10]
     # plot an image grayscale

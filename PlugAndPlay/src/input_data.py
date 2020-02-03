@@ -1,11 +1,3 @@
-# want to generate pairs of noisy observation, groundtruth - perhaps better to save them...?
-
-# get grounthruth images
-
-# noisy them up - maybe you do not want to store as well and only noisy them up in the network
-
-# output pair noisy, truth
-
 import os
 import glob
 
@@ -50,11 +42,6 @@ class datasetMRI(torch.utils.data.Dataset):
         """
         return self.len
 
-# get some random training images
-# dataiter = iter(trainloader)
-# images, labels = dataiter.next()
-
-
 if __name__ == "__main__":
 
     # think about where to have this - perhaps in trainDNN.py
@@ -76,3 +63,8 @@ if __name__ == "__main__":
     plt.imshow(sample_img, cmap='gray')
     plt.show()
     plt.close('all')
+
+    # get some random training images
+    # dataiter = iter(trainloader)
+    # images, labels = dataiter.next()
+

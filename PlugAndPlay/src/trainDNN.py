@@ -4,11 +4,7 @@ import os
 from DNN import Net
 from input_data import datasetMRI
 
-"""
-nrows = 5
-ncols = 5
-net = Net(1, nrows)
-
+""" Extra notes
 .requires_grad as True, it starts to track all operations on it. 
 When you finish your computation you can call .backward() and have all the gradients computed automatically.
 The gradient for this tensor will be accumulated into .grad attribute.
@@ -28,26 +24,32 @@ print(input_.grad)
 
 
 def checkGPU(net):
-    # Move to GPU if possible
+    """
+        Check GPU availability. 
+        Nonetheless return ... (not sure what they do exactly)
+    """
     cuda = True if torch.cuda.is_available() else False
 
     if cuda:
-    
-        print("cuda driver found - using a GPU.\n")
-        net.cuda()  # ?
 
-        return torch.nn.DataParallel(net).cuda(), torch.cuda.FloatTensor  # not sure what this does
+        print("cuda driver found - using a GPU.\n")
+        net.cuda()  # ? see Audrey's noteboook
+
+        # not sure what this second part does
+        return torch.nn.DataParallel(net).cuda(), torch.cuda.FloatTensor
 
     else:
 
         print("no cuda driver found - using a CPU.\n")
 
-        return torch.nn.DataParallel(net), torch.FloatTensor  # can stil parallelise on CPU?
+        # can stil parallelise on CPU?
+        return torch.nn.DataParallel(net), torch.FloatTensor
+
 
 def createCheckpoint():
-    # ------------------------------
-    # Create a checkpoint folder to save network during training
-    # ------------------------------
+    """
+        Creata a folder to save the model at the end of each epoch.
+    """
     checkpoints_folder = '../checkpoints/'
     try:  # Create checkpoint directory
         os.mkdir(checkpoints_folder)
@@ -59,27 +61,34 @@ def createCheckpoint():
 
 def main(loader_train, net, sigma, epochs, criterion, optimizer):
     """
-    First check for GPU and then train network
+    Train the network and save model after each epoch.
+    Add some statistics (validation) to keep track of performance.
     """
 
+    # check availability GPU and return appropriate Tensor module?
     net, Tensor = checkGPU(net)
-
+    # create folder to save model
     createCheckpoint()
 
-    for epoch in range(epochs):  # loop over the dataset multiple times
+    # loop over the dataset multiple times
+    for epoch in range(epochs):  
+        # Audrey had this why?
+        #net.train()
+        # compute average loss at each epoch
+        loss_tot = 0.0
 
-        running_loss = 0.0
+        # loop trough each batch?
         for i, data in enumerate(loader_train, 0):
 
-            optimizer.zero_grad() # otherwise it accumulates the gradiensts?
-
-            # ------------------------------
-            # Create noisy data
-            # ------------------------------
+            # zero gradients otherwise it accumulates them?
+            optimizer.zero_grad()  
+            # not sure of the following
             data_true = torch.autograd.Variable(
                 data.type(Tensor), requires_grad=False)  # Keep initial data in memory ## why not true
             # what is the advantage of noising each image every time? in some sense you are changhing the dataset each time - for underfitting?
-            noise = sigma * torch.randn(data_true.shape).type(Tensor) # requires_grad should be true here then?? automatics?
+            # requires_grad should be true here then?? automatics?
+            noise = sigma * torch.randn(data_true.shape).type(Tensor)
+            # Create noisy data
             data_noisy = data_true+noise
 
             # forward + backward + optimize
@@ -87,8 +96,10 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
             loss = criterion(outputs, data_true)
             loss.backward()
 
-            # torch.nn.utils.clip_grad_norm_(model.parameters(), 1)  # do not know what this does
+            # do not know what this does
+            # torch.nn.utils.clip_grad_norm_(model.parameters(), 1) 
 
+            # update weights 
             optimizer.step()
 
             print("[epoch %d][%d/%d] loss: %.4f" %
@@ -96,8 +107,10 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
 
             loss_tot += loss.item()
 
+        # average loss
         loss_tot /= len(loader_train)
 
+        # save model
         torch.save(model.state_dict(), os.path.join(
             checkpoints_folder, 'dncnn_toy_'+str(epoch)+'.pth'))
 
@@ -106,43 +119,32 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
 
     print('Finished Training')
 
-# WRIRTE THE ABOCE AS A FUNCTION
-
 
 if __name__ == "__main__":
 
-    # set up parameters
-
-    # ------------------------------
-    # Load training dataset
-    # ------------------------------
     from input_data import datasetMRI
-
+    
     PATH_IMG = os.path.join(os.path.sep, os.path.dirname(
         os.path.dirname(os.path.abspath(__file__))), 'data', 'trainingset', '*.png')
 
     TRANSFORM = torchvision.transforms.Compose(   # images to tensors
         [torchvision.transforms.ToTensor()])   # what does the normalisation do - do not know yet - when is it needed
 
-    BATCH_SIZE = 9
-
+    # Load training dataset
     trainset = datasetMRI(PATH_IMG, TRANSFORM)
-
-    LOADER_TRAIN= torch.utils.data.DataLoader(trainset, batch_size=BATCH_SIZE,
+    BATCH_SIZE = 9
+    LOADER_TRAIN = torch.utils.data.DataLoader(trainset, batch_size=BATCH_SIZE,
                                                shuffle=True)  # shuffles the data set at each epoch
-
+    # initialise network
     NET = Net(1, 256)
-
     # Noise level
     SIGMA = 0.1
     # number of dataset iterations
     EPOCHS = 2
-
     # training setup
-
     CRITERION = torch.nn.MSELoss()
     # https://arxiv.org/pdf/1412.6980.pdf why have to pass in net.parameters
     OPTIMIZER = torch.optim.Adam(NET.parameters(), lr=1e-3)
 
-    main(loader_train = LOADER_TRAIN, net=NET, sigma=SIGMA, epochs=EPOCHS,
+    main(loader_train=LOADER_TRAIN, net=NET, sigma=SIGMA, epochs=EPOCHS,
          criterion=CRITERION, optimizer=OPTIMIZER)

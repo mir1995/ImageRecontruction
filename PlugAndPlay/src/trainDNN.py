@@ -71,9 +71,9 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
     createCheckpoint()
 
     # loop over the dataset multiple times
-    for epoch in range(epochs):  
+    for epoch in range(epochs):
         # Audrey had this why?
-        #net.train()
+        # net.train()
         # compute average loss at each epoch
         loss_tot = 0.0
 
@@ -81,7 +81,7 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
         for i, data in enumerate(loader_train, 0):
 
             # zero gradients otherwise it accumulates them?
-            optimizer.zero_grad()  
+            optimizer.zero_grad()
             # not sure of the following
             data_true = torch.autograd.Variable(
                 data.type(Tensor), requires_grad=False)  # Keep initial data in memory ## why not true
@@ -97,9 +97,9 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
             loss.backward()
 
             # do not know what this does
-            # torch.nn.utils.clip_grad_norm_(model.parameters(), 1) 
+            # torch.nn.utils.clip_grad_norm_(model.parameters(), 1)
 
-            # update weights 
+            # update weights
             optimizer.step()
 
             print("[epoch %d][%d/%d] loss: %.4f" %
@@ -123,7 +123,7 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
 if __name__ == "__main__":
 
     from input_data import datasetMRI
-    
+
     PATH_IMG = os.path.join(os.path.sep, os.path.dirname(
         os.path.dirname(os.path.abspath(__file__))), 'data', 'trainingset', '*.png')
 
@@ -135,6 +135,8 @@ if __name__ == "__main__":
     BATCH_SIZE = 9
     LOADER_TRAIN = torch.utils.data.DataLoader(trainset, batch_size=BATCH_SIZE,
                                                shuffle=True)  # shuffles the data set at each epoch
+
+    ##################### PARAMETERS #####################
     # initialise network
     NET = Net(1, 256)
     # Noise level

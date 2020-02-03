@@ -83,7 +83,7 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
             # zero gradients otherwise it accumulates them?
             optimizer.zero_grad()
             # not sure of the following
-            data_true = torch.autograd.Variable(
+            data_true = torch.autograd.Variable( # does this turn the image in the same dimension of the network output??
                 data.type(Tensor), requires_grad=False)  # Keep initial data in memory ## why not true
             # what is the advantage of noising each image every time? in some sense you are changhing the dataset each time - for underfitting?
             # requires_grad should be true here then?? automatics?

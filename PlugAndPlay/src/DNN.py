@@ -2,34 +2,29 @@ import torch
 
 
 class Net(torch.nn.Module):
-    def __init__(self, channels=1, features=32):
+
+    def __init__(self, channels=1, features=64, num_of_layers=10):
         super(Net, self).__init__()
 
         kernel_size = 3
-        padding = 1
+        padding = 1 # ensures input feature map = output feature map
 
-        self.conv1 = torch.nn.Conv2d(
-            in_channels=1, out_channels=1, kernel_size=3)
-        # an affine operation: y = Wx + b
-        # 6*6 from image dimension
-        self.fc1 = torch.nn.Linear(1 * (features - 2)**2, features**2)
+        layers = []
+        layers.append(torch.nn.Conv2d(in_channels=channels, out_channels=features, kernel_size=kernel_size, padding=padding, bias=False))
+        layers.append(torch.nn.ReLU(inplace=True))
+        for _ in range(num_of_layers-2):
+            layers.append(torch.nn.Conv2d(in_channels=features, out_channels=features, kernel_size=kernel_size, padding=padding, bias=False))
+            layers.append(torch.nn.BatchNorm2d(features))
+            layers.append(torch.nn.ReLU(inplace=True))
+        layers.append(torch.nn.Conv2d(in_channels=features, out_channels=channels, kernel_size=kernel_size, padding=padding, bias=False))
+
+        self.dncnn = torch.nn.Sequential(*layers)
 
     def forward(self, x):
-        # Max pooling over a (2, 2) window
-        x = torch.nn.functional.relu(self.conv1(x))
-        # If the size is a square you can only specify a single number
-        x = x.view(-1, self.num_flat_features(x))
-        x = self.fc1(x)
-
-        return x
-
-    def num_flat_features(self, x):
-        size = x.size()[1:]  # all dimensions except the batch dimension
-        num_features = 1
-        for s in size:
-            num_features *= s
-        return num_features
-
+        x1 = self.dncnn(x)
+        #print(x1.size)
+        out = x+x1
+        return out
 
 if __name__ == "__main__":
 

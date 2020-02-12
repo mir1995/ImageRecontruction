@@ -1,8 +1,6 @@
 import os
 import glob
 
-import matplotlib.pyplot as plt
-
 import numpy as np
 
 from PIL import Image
@@ -27,8 +25,8 @@ class datasetMRI(torch.utils.data.Dataset):
         """
 
         # opens and identifies the img but data not read until process or load()? / opens at the path
-        img_true = Image.open(self.filenames[index])
-        img_true = np.asarray(img_true)  # gray scale image
+        img_true = Image.open(self.filenames[index]) #.resize((125,125),Image.ANTIALIAS)
+        #img_true = np.asarray(img_true)  # gray scale image
 
         if self.transform:
             img_true = self.transform(img_true)
@@ -43,10 +41,10 @@ class datasetMRI(torch.utils.data.Dataset):
         return self.len
 
 if __name__ == "__main__":
-
+    import matplotlib.pyplot as plt
     # think about where to have this - perhaps in trainDNN.py
     PATH_IMG = os.path.join(os.path.sep, os.path.dirname(
-        os.path.dirname(os.path.abspath(__file__))), 'data', 'trainingset', '*.png')
+        os.path.dirname(os.path.abspath(__file__))), 'data', 'training', '*.png')
 
     TRANSFORM = torchvision.transforms.Compose(
         [torchvision.transforms.ToTensor()])   # what does the normalisation do - do not know yet - when is it needed
@@ -58,7 +56,7 @@ if __name__ == "__main__":
     trainloader = torch.utils.data.DataLoader(trainset, batch_size=BATCH_SIZE,
                                               shuffle=True)  # shuffles the data set at each epoch
 
-    sample_img = datasetMRI(PATH_IMG)[10]
+    sample_img = datasetMRI(PATH_IMG)[20]
     # plot an image grayscale
     plt.imshow(sample_img, cmap='gray')
     plt.show()

@@ -50,13 +50,13 @@ def createCheckpoint():
     """
         Creata a folder to save the model at the end of each epoch.
     """
-    checkpoints_folder = '../checkpoints/'
+    checkpoints_folder = '../models/'
     try:  # Create checkpoint directory
         os.mkdir(checkpoints_folder)
     except:
         print('folder '+checkpoints_folder+' exists')
 
-    return None
+    return checkpoints_folder
 
 
 def main(loader_train, net, sigma, epochs, criterion, optimizer):
@@ -68,17 +68,17 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
     # check availability GPU and return appropriate Tensor module?
     net, Tensor = checkGPU(net)
     # create folder to save model
-    createCheckpoint()
-
+    checkpoints_folder = createCheckpoint()
+    print(len(loader_train))
     # loop over the dataset multiple times
     for epoch in range(epochs):
         # Audrey had this why?
         # net.train()
         # compute average loss at each epoch
-        loss_tot = 0.0
+        loss_tot = 0.0 
 
         # loop trough each batch?
-        for i, data in enumerate(loader_train, 0):
+        for i, data in enumerate(loader_train, 1):
 
             # zero gradients otherwise it accumulates them?
             optimizer.zero_grad()
@@ -93,7 +93,7 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
 
             # forward + backward + optimize
             out = net(data_noisy)
-            loss = criterion(outputs, data_true)
+            loss = criterion(out, data_true)
             loss.backward()
 
             # do not know what this does
@@ -111,7 +111,7 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
         loss_tot /= len(loader_train)
 
         # save model
-        torch.save(model.state_dict(), os.path.join(
+        torch.save(net.state_dict(), os.path.join(
             checkpoints_folder, 'dncnn_toy_'+str(epoch)+'.pth'))
 
         print("[epoch %d]: average training loss: %.4f" %
@@ -123,26 +123,24 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
 if __name__ == "__main__":
 
     from input_data import datasetMRI
-
     PATH_IMG = os.path.join(os.path.sep, os.path.dirname(
-        os.path.dirname(os.path.abspath(__file__))), 'data', 'trainingset', '*.png')
-
+        os.path.dirname(os.path.abspath(__file__))), 'data', 'training', '*.png')
+    #PATH_IMG  = '/exports/eddie/scratch/s1992054/project/data/training/*.png' 
     TRANSFORM = torchvision.transforms.Compose(   # images to tensors
         [torchvision.transforms.ToTensor()])   # what does the normalisation do - do not know yet - when is it needed
 
     # Load training dataset
     trainset = datasetMRI(PATH_IMG, TRANSFORM)
     BATCH_SIZE = 9
-    LOADER_TRAIN = torch.utils.data.DataLoader(trainset, batch_size=BATCH_SIZE,
-                                               shuffle=True)  # shuffles the data set at each epoch
+    LOADER_TRAIN = torch.utils.data.DataLoader(trainset, batch_size=BATCH_SIZE)  # shuffles the data set at each epoch
 
     ##################### PARAMETERS #####################
     # initialise network
-    NET = Net(1, 256)
+    NET = Net(1, 32)
     # Noise level
     SIGMA = 0.1
     # number of dataset iterations
-    EPOCHS = 2
+    EPOCHS = 20
     # training setup
     CRITERION = torch.nn.MSELoss()
     # https://arxiv.org/pdf/1412.6980.pdf why have to pass in net.parameters

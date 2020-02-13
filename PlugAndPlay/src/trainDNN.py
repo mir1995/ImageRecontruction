@@ -1,8 +1,3 @@
-import torch
-import torchvision
-import os
-from DNN import Net
-from input_data import datasetMRI
 
 """ Extra notes
 .requires_grad as True, it starts to track all operations on it. 
@@ -75,18 +70,16 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
         # Audrey had this why?
         # net.train()
         # compute average loss at each epoch
-        loss_tot = 0.0 
+        loss_tot = 0.0
 
         # loop trough each batch?
-        for i, data in enumerate(loader_train, 1):
-
+        for i, data in enumerate(loader_train, 0):
+            net.train()  # not sure
             # zero gradients otherwise it accumulates them?
             optimizer.zero_grad()
             # not sure of the following
-            data_true = torch.autograd.Variable( # does this turn the image in the same dimension of the network output??
-                data.type(Tensor), requires_grad=False)  # Keep initial data in memory ## why not true
-            # what is the advantage of noising each image every time? in some sense you are changhing the dataset each time - for underfitting?
-            # requires_grad should be true here then?? automatics?
+            data_true = torch.autograd.Variable(  # does this turn the image in the same dimension of the network output??
+                data.type(Tensor), requires_grad=False)  # Keep initial data in memory ##
             noise = sigma * torch.randn(data_true.shape).type(Tensor)
             # Create noisy data
             data_noisy = data_true+noise
@@ -122,29 +115,29 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
 
 if __name__ == "__main__":
 
+    import os
+    import torch
+    import torchvision
+    from DNN import Net
     from input_data import datasetMRI
-    PATH_IMG = os.path.join(os.path.sep, os.path.dirname(
-        os.path.dirname(os.path.abspath(__file__))), 'data', 'training', '*.png')
-    #PATH_IMG  = '/exports/eddie/scratch/s1992054/project/data/training/*.png' 
-    TRANSFORM = torchvision.transforms.Compose(   # images to tensors
-        [torchvision.transforms.ToTensor()])   # what does the normalisation do - do not know yet - when is it needed
+    import parameters
 
     # Load training dataset
-    trainset = datasetMRI(PATH_IMG, TRANSFORM)
-    BATCH_SIZE = 9
-    LOADER_TRAIN = torch.utils.data.DataLoader(trainset, batch_size=BATCH_SIZE)  # shuffles the data set at each epoch
+    trainset = datasetMRI(parameters.Images.PATH_TRAINING,
+                          parameters.Images.TRANSFORM,
+                          parameters.Images.RESOLUTION)
+    LOADER_TRAIN = torch.utils.data.DataLoader(
+        trainset, batch_size=parameters.Minimiser.BATCH_SIZE)  # shuffles the data set at each epoch
 
     ##################### PARAMETERS #####################
     # initialise network
-    NET = Net(1, 32)
-    # Noise level
-    SIGMA = 0.1
-    # number of dataset iterations
-    EPOCHS = 20
-    # training setup
-    CRITERION = torch.nn.MSELoss()
-    # https://arxiv.org/pdf/1412.6980.pdf why have to pass in net.parameters
-    OPTIMIZER = torch.optim.Adam(NET.parameters(), lr=1e-3)
+    NET = Net(parameters.Images.CHANNELS,
+              parameters.Minimiser.NUMB_FEAT_MAPS,
+              parameters.Minimiser.NUMB_LAYERS)
 
-    main(loader_train=LOADER_TRAIN, net=NET, sigma=SIGMA, epochs=EPOCHS,
-         criterion=CRITERION, optimizer=OPTIMIZER)
+    main(loader_train=LOADER_TRAIN,
+         net=NET,
+         sigma=parameters.Minimiser.SIGMA,
+         epochs=parameters.Minimiser.EPOCHS,
+         criterion=parameters.Minimiser.CRITERION,
+         optimizer=parameters.Minimiser.OPTIMIZER)

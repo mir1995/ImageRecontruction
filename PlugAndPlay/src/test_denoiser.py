@@ -10,9 +10,6 @@ import numpy as np
 import parameters
 
 
-TRANSFORM = torchvision.transforms.Compose(   # images to tensors
-        [torchvision.transforms.ToTensor()])   # what does the normalisation do - do not know yet - when is it needed
-
 # Load training dataset
 trainset = datasetMRI(parameters.Images.PATH_TEST, parameters.Images.TRANSFORM)
 LOADER_TRAIN = torch.utils.data.DataLoader(trainset, batch_size=1)
@@ -20,7 +17,8 @@ LOADER_TRAIN = torch.utils.data.DataLoader(trainset, batch_size=1)
 
 model = Net(parameters.Images.CHANNELS, parameters.Minimiser.NUMB_FEAT_MAPS)
 model = torch.nn.DataParallel(model) # don't know but has to do with the fact that DataParallel is used during training
-model.load_state_dict(torch.load("/home/s1992054/Desktop/ImageRecontruction/PlugAndPlay/models/dncnn_toy_19.pth", map_location=torch.device('cpu')))
+model.load_state_dict(torch.load(os.path.join(os.path.sep, os.path.dirname(
+        os.path.dirname(os.path.abspath(__file__))), 'models', 'dncnn_toy_19.pth'), map_location=torch.device('cpu')))
 model.eval()
 
 img_in = trainset[0]

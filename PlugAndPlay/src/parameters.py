@@ -1,4 +1,5 @@
 import os
+import torch
 import torchvision
 
 
@@ -34,9 +35,6 @@ class Minimiser:
 
     # training setup
     CRITERION = torch.nn.MSELoss()
-    
-    # https://arxiv.org/pdf/1412.6980.pdf why have to pass in net.parameters
-    OPTIMIZER = torch.optim.Adam(NET.parameters(), lr=1e-3)
 
 
 if __name__ == "__main__":

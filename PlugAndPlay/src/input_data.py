@@ -11,11 +11,12 @@ import torchvision
 
 class datasetMRI(torch.utils.data.Dataset):
 
-    def __init__(self, path_data, transf=None):
+    def __init__(self, path_data, transf=None, resolution = None):
 
         # plus if you want to add the ones from the test data - but rather keep them separate
         self.filenames = glob.glob(path_data)
         self.transform = transf
+        self.resolution = resolution
         self.len = len(self.filenames)
 
     def __getitem__(self, index):
@@ -25,12 +26,13 @@ class datasetMRI(torch.utils.data.Dataset):
         """
 
         # opens and identifies the img but data not read until process or load()? / opens at the path
-        img_true = Image.open(self.filenames[index]) #.resize((125,125),Image.ANTIALIAS)
-        #img_true = np.asarray(img_true)  # gray scale image
+        img_true = Image.open(self.filenames[index]) 
+        
+        if self.resolution:
+            img_true.resize(self.resolution,Image.ANTIALIAS)
 
         if self.transform:
             img_true = self.transform(img_true)
-            # print(img_true.size())
 
         return img_true  # return image as an array
     
@@ -41,8 +43,11 @@ class datasetMRI(torch.utils.data.Dataset):
         return self.len
 
 if __name__ == "__main__":
+
+
     import matplotlib.pyplot as plt
-    # think about where to have this - perhaps in trainDNN.py
+    
+
     PATH_IMG = os.path.join(os.path.sep, os.path.dirname(
         os.path.dirname(os.path.abspath(__file__))), 'data', 'training', '*.png')
 

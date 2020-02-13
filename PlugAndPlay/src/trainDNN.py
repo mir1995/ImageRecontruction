@@ -140,4 +140,4 @@ if __name__ == "__main__":
          sigma=parameters.Minimiser.SIGMA,
          epochs=parameters.Minimiser.EPOCHS,
          criterion=parameters.Minimiser.CRITERION,
-         optimizer=parameters.Minimiser.OPTIMIZER)
+         optimizer= torch.optim.Adam(NET.parameters(), lr=1e-3)) # https://arxiv.org/pdf/1412.6980.pdf why have to pass in net.parameters

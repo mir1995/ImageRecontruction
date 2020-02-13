@@ -11,7 +11,7 @@ import parameters
 
 
 # Load training dataset
-trainset = datasetMRI(parameters.Images.PATH_TEST, parameters.Images.TRANSFORM)
+trainset = datasetMRI(parameters.Images.PATH_TRAINING, parameters.Images.TRANSFORM)
 LOADER_TRAIN = torch.utils.data.DataLoader(trainset, batch_size=1)
 
 
@@ -38,17 +38,12 @@ with torch.no_grad():
 fig, ax = plt.subplots(1,3, figsize = (10,8))
 
 img_noisy = img_noisy.squeeze(0).squeeze(0).cpu().numpy()
-img_noisy = np.moveaxis(img_noisy, 0, -1)
 
-img_out = img_in.squeeze(0).squeeze(0).cpu().numpy()
-img_out = np.moveaxis(img_out, 0, -1)
+img_out = img_out.squeeze(0).squeeze(0).cpu().numpy()
+
 # print images
 ax[0].imshow(img_noisy, cmap='gray')
 ax[1].imshow(img_out, cmap='gray')
 ax[2].imshow(img_in.squeeze(0), cmap='gray')
 plt.show()
 plt.close('all')
-
-
-### Load CNN - MAYBE CHANGE PATH
-""""""

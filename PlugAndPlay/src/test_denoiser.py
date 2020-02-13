@@ -7,19 +7,19 @@ import matplotlib.pyplot as plt
 from PIL import Image
 from torch.autograd import Variable
 import numpy as np
+import parameters
 
-PATH_IMG = os.path.join(os.path.sep, os.path.dirname(
-        os.path.dirname(os.path.abspath(__file__))), 'data', 'test', '*.png')
+
 TRANSFORM = torchvision.transforms.Compose(   # images to tensors
         [torchvision.transforms.ToTensor()])   # what does the normalisation do - do not know yet - when is it needed
 
 # Load training dataset
-trainset = datasetMRI(PATH_IMG, TRANSFORM)
+trainset = datasetMRI(parameters.Images.PATH_TEST, parameters.Images.TRANSFORM)
 LOADER_TRAIN = torch.utils.data.DataLoader(trainset, batch_size=1)
 
 
-model = Net(1, 32)
-model = torch.nn.DataParallel(model)
+model = Net(parameters.Images.CHANNELS, parameters.Minimiser.NUMB_FEAT_MAPS)
+model = torch.nn.DataParallel(model) # don't know but has to do with the fact that DataParallel is used during training
 model.load_state_dict(torch.load("/home/s1992054/Desktop/ImageRecontruction/PlugAndPlay/models/dncnn_toy_19.pth", map_location=torch.device('cpu')))
 model.eval()
 
@@ -30,7 +30,7 @@ with torch.no_grad():
     
     sigma = 0.1
     img_noisy = img_in.unsqueeze(0)
-    img_noisy = torch.autograd.Variable( # does this turn the image in the same dimension of the network output??
+    img_noisy = torch.autograd.Variable( 
                 img_noisy.type(Tensor), requires_grad=False)
     img_noisy = img_noisy + sigma*torch.randn(img_noisy.shape)
     img_out = model(img_noisy)

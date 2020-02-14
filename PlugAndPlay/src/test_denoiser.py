@@ -26,7 +26,7 @@ Tensor = torch.FloatTensor
 
 with torch.no_grad():
     
-    sigma = 0.1
+    sigma = 0.2
     img_noisy = img_in.unsqueeze(0)
     img_noisy = torch.autograd.Variable( 
                 img_noisy.type(Tensor), requires_grad=False)
@@ -35,15 +35,25 @@ with torch.no_grad():
     
 
 # plot images
-fig, ax = plt.subplots(1,3, figsize = (10,8))
+fig, axes = plt.subplots(1,3, figsize = (10,8))
 
 img_noisy = img_noisy.squeeze(0).squeeze(0).cpu().numpy()
+
+img_in = img_in.squeeze(0)
 
 img_out = img_out.squeeze(0).squeeze(0).cpu().numpy()
 
 # print images
-ax[0].imshow(img_noisy, cmap='gray')
-ax[1].imshow(img_out, cmap='gray')
-ax[2].imshow(img_in.squeeze(0), cmap='gray')
-plt.show()
-plt.close('all')
+axes[0].imshow(img_noisy, cmap='gray')
+axes[1].imshow(img_out, cmap='gray')
+axes[2].imshow(img_in, cmap='gray')
+labels = [r'Noisy $sigma = {}$'.format(sigma), 'Out', 'Truth']
+for i, ax in enumerate(axes):
+    ax.set_title(labels[i],pad = 20)
+    ax.set_xticks([])
+    ax.set_yticks([])
+plt.xticks([]),plt.yticks([])
+#plt.show()
+plt.savefig(os.path.join(os.path.sep, os.path.dirname(
+        os.path.dirname(os.path.abspath(__file__))), 'plots', 'noisy2OutTruth.pdf'))
+#plt.close('all')

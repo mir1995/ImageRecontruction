@@ -52,7 +52,7 @@ if __name__ == "__main__":
     import csv
 
     STATS_FILE = os.path.join(os.path.sep, os.path.dirname(
-        os.path.dirname(os.path.abspath(__file__))), 'stats', 'mse', '.csv')
+        os.path.dirname(os.path.abspath(__file__))),'data', 'stats', 'mse.csv')
 
     loader_test = torch.utils.data.DataLoader(
         datasetMRI(parameters.Images.PATH_TEST,
@@ -65,17 +65,17 @@ if __name__ == "__main__":
     # don't know but has to do with the fact that DataParallel is used during training
     net = torch.nn.DataParallel(net)
     net.load_state_dict(torch.load(
-        parameters.nets.DCNN_256_01, map_location=torch.device('cpu')))
+        parameters.Models.DCNN_256_01, map_location=torch.device('cpu')))
 
-    with open(STATS_FILE, 'w') as csv_file:
+    with open(STATS_FILE, 'w+') as csv_file:
 
         stats_writer = csv.writer(csv_file, delimiter=',')
 
-    stats_writer.writerow(['TrainedNoiselLevel', 'TestNoiseLevel', 'MSE', 'VAR'])
+        stats_writer.writerow(['TrainedNoiselLevel', 'TestNoiseLevel', 'MSE', 'VAR'])
 
-    sigma = .1
-    for sigma_test in [0.1, 0.15, 0.2, 0.3]:
-        mean, var = getMSE(loader_test, net, sigma, torch.nn.MSELoss())
-        stats_writer.writerow([sigma, sigma_test, mean, var ])
+        sigma = .1
+        for sigma_test in [0.1, 0.15, 0.2, 0.3]:
+            mean, var = getMSE(loader_test, net, sigma, torch.nn.MSELoss())
+            stats_writer.writerow([sigma, sigma_test, mean, var ])
 
 

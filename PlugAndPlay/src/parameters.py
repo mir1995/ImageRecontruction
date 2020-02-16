@@ -11,7 +11,7 @@ class Images:
     PATH_TEST = os.path.join(os.path.sep, os.path.dirname(
         os.path.dirname(os.path.abspath(__file__))), 'data', 'test', '*.png')
 
-    RESOLUTION = (125, 125)
+    RESOLUTION = None # when None it will train on the original resolution, ow pass in tuple (,) for desired resolution
 
     CHANNELS = 1
 
@@ -40,6 +40,9 @@ class Models:
 
     DCNN_125 = os.path.join(os.path.sep, os.path.dirname(
         os.path.dirname(os.path.abspath(__file__))), 'models', 'dncnn_125resolution.pth')
+    
+    DCNN_256 = os.path.join(os.path.sep, os.path.dirname(
+        os.path.dirname(os.path.abspath(__file__))), 'models', 'dncnn_256resolution.pth')
 
 
 if __name__ == "__main__":

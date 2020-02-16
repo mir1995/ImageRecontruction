@@ -36,6 +36,11 @@ class Minimiser:
     # training setup
     CRITERION = torch.nn.MSELoss()
 
+class Models:
+
+    DCNN_125 = os.path.join(os.path.sep, os.path.dirname(
+        os.path.dirname(os.path.abspath(__file__))), 'models', 'dncnn_125resolution.pth')
+
 
 if __name__ == "__main__":
 

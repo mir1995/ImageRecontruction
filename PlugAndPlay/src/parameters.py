@@ -34,7 +34,7 @@ class Minimiser:
     NUMB_LAYERS = 10
 
     # Noise level
-    SIGMA = 0.1
+    SIGMA = []
 
     # number of dataset iterations
     EPOCHS = 20

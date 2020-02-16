@@ -17,22 +17,22 @@ LOADER_TRAIN = torch.utils.data.DataLoader(trainset, batch_size=1)
 
 model = Net(parameters.Images.CHANNELS, parameters.Minimiser.NUMB_FEAT_MAPS)
 model = torch.nn.DataParallel(model) # don't know but has to do with the fact that DataParallel is used during training
-model.load_state_dict(torch.load(parameters.Models.DCNN_125, map_location=torch.device('cpu')))
+model.load_state_dict(torch.load(parameters.Models.DCNN_125_01, map_location=torch.device('cpu')))
 model.eval()
 
 img_in = trainset[0]
 Tensor = torch.FloatTensor
-imgs = [0]*7
+imgs = [0]*1
 with torch.no_grad():
     
-    sigma = 0.2
+    sigma = 0.1
     img_noisy = img_in.unsqueeze(0)
     img_noisy = torch.autograd.Variable( 
                 img_noisy.type(Tensor), requires_grad=False)
     img_noisy = img_noisy + sigma*torch.randn(img_noisy.shape)
     img_noisy1 = img_noisy
     img_out = model(img_noisy)
-    for i in range(7):
+    for i in range(1):
         imgs[i] = img_out.squeeze(0).squeeze(0).cpu().numpy().copy()
         img_noisy = img_out.clone()
         img_out = model(img_noisy)

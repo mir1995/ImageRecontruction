@@ -45,7 +45,7 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
     import parameters
 
-    sample_img = datasetMRI(parameters.Images.PATH_TRAINING)[20]
+    sample_img = datasetMRI(parameters.Images.PATH_TRAINING)[20] 
     plt.imshow(sample_img, cmap='gray')
     plt.show()
     plt.close('all')

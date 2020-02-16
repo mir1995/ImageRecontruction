@@ -29,6 +29,7 @@ with torch.no_grad():
     img_noisy = img_in.unsqueeze(0)
     img_noisy = torch.autograd.Variable( 
                 img_noisy.type(Tensor), requires_grad=False)
+    print(torch.mean(img_noisy))
     img_noisy = img_noisy + sigma*torch.randn(img_noisy.shape)
     img_noisy1 = img_noisy
     img_out = model(img_noisy)
@@ -47,7 +48,7 @@ img_in = img_in.squeeze(0)
 img_out = img_out.squeeze(0).squeeze(0).cpu().numpy()
 
 # print images
-for i in range(7):
+for i in range(1):
     fig, axes = plt.subplots(1,3, figsize = (10,8))
     axes[0].imshow(img_noisy1, cmap='gray')
     axes[1].imshow(imgs[i], cmap='gray')

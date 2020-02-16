@@ -11,12 +11,18 @@ class Images:
     PATH_TEST = os.path.join(os.path.sep, os.path.dirname(
         os.path.dirname(os.path.abspath(__file__))), 'data', 'test', '*.png')
 
-    RESOLUTION = None # when None it will train on the original resolution, ow pass in tuple (,) for desired resolution
+    # when None it will train on the original resolution, ow pass in tuple (,) for desired resolution
+    RESOLUTION = None
 
     CHANNELS = 1
 
-    TRANSFORM = torchvision.transforms.Compose(   # images to tensors
-        [torchvision.transforms.ToTensor()])   # what does the normalisation do
+    TRANSFORM = torchvision.transforms.Compose([
+        # torchvision.transforms.RandomResizedCrop(64), # still not clear # i think it could be a disadvantage as much as an advantage especially for classification - obviously depending on the image
+        torchvision.transforms.RandomHorizontalFlip(),
+        torchvision.transforms.RandomVerticalFlip(),
+        torchvision.transforms.ToTensor()
+    ])   # what does the normalisation do
+    # torchvision.transforms.FiveCrop(size) # Crop the given PIL Image into four corners and the central crop
 
 
 class Minimiser:
@@ -36,13 +42,14 @@ class Minimiser:
     # training setup
     CRITERION = torch.nn.MSELoss()
 
+
 class Models:
 
-    DCNN_125 = os.path.join(os.path.sep, os.path.dirname(
+    DCNN_125_01 = os.path.join(os.path.sep, os.path.dirname(
         os.path.dirname(os.path.abspath(__file__))), 'models', 'dncnn_125resolution.pth')
-    
-    DCNN_256 = os.path.join(os.path.sep, os.path.dirname(
-        os.path.dirname(os.path.abspath(__file__))), 'models', 'dncnn_256resolution.pth')
+
+    DCNN_256_01 = os.path.join(os.path.sep, os.path.dirname(
+        os.path.dirname(os.path.abspath(__file__))), 'models', 'dncnn_256resolution_01noise.pth')
 
 
 if __name__ == "__main__":

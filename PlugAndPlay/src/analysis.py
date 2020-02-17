@@ -28,7 +28,7 @@ def getMSE(loader_test, net, sigma, criterion, numb_itrs = 10):
 
                 # forward + loss
                 out = net(data_noisy)
-                loss = criterion(out, data_true)
+                loss = criterion(out*255, data_true*255)
 
                 # do not know what this does
                 # torch.nn.utils.clip_grad_norm_(net.parameters(), 1)
@@ -39,6 +39,7 @@ def getMSE(loader_test, net, sigma, criterion, numb_itrs = 10):
     # average loss
     mean_loss /= (len(loader_test) * numb_itrs)
     var/=  (len(loader_test) * numb_itrs) 
+    print(len(loader_test))
     var-=  (mean_loss)**2
 
     return mean_loss, var
@@ -57,8 +58,7 @@ if __name__ == "__main__":
     loader_test = torch.utils.data.DataLoader(
         datasetMRI(parameters.Images.PATH_TEST,
                    transf=parameters.Images.TRANSFORM),
-        parameters.Minimiser.BATCH_SIZE,
-        shuffle=False, num_workers=1)
+        parameters.Minimiser.BATCH_SIZE)
 
 
     net = Net(parameters.Images.CHANNELS, parameters.Minimiser.NUMB_FEAT_MAPS)

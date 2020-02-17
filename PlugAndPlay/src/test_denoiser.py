@@ -25,7 +25,7 @@ Tensor = torch.FloatTensor
 imgs = [0]*1
 with torch.no_grad():
     
-    sigma = 0.1
+    sigma = 0.05
     img_noisy = img_in.unsqueeze(0)
     img_noisy = torch.autograd.Variable( 
                 img_noisy.type(Tensor), requires_grad=False)

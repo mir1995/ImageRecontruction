@@ -59,23 +59,23 @@ if __name__ == "__main__":
         datasetMRI(parameters.Images.PATH_TEST,
                    transf=parameters.Images.TRANSFORM),
         parameters.Minimiser.BATCH_SIZE)
-
+    print(loader_test)
 
     net = Net(parameters.Images.CHANNELS, parameters.Minimiser.NUMB_FEAT_MAPS)
     # don't know but has to do with the fact that DataParallel is used during training
     net = torch.nn.DataParallel(net)
     net.load_state_dict(torch.load(
-        parameters.Models.DCNN_256_01, map_location=torch.device('cpu')))
+        parameters.Models.DCNN_256_02, map_location=torch.device('cpu')))
 
-    with open(STATS_FILE, 'w+') as csv_file:
+    with open(STATS_FILE, 'a') as csv_file:
 
         stats_writer = csv.writer(csv_file, delimiter=',')
 
-        stats_writer.writerow(['TrainedNoiselLevel', 'TestNoiseLevel', 'MSE', 'VAR'])
+        #stats_writer.writerow(['TrainedNoiselLevel', 'TestNoiseLevel', 'MSE', 'VAR'])
 
-        sigma = .1
-        for sigma_test in [0.1, 0.15, 0.2, 0.3]:
-            mean, var = getMSE(loader_test, net, sigma, torch.nn.MSELoss())
+        sigma = .2
+        for sigma_test in [0.05, 0.1, 0.15, 0.2, 0.3]:
+            mean, var = getMSE(loader_test, net, sigma_test, torch.nn.MSELoss())
             stats_writer.writerow([sigma, sigma_test, mean, var ])
 
 

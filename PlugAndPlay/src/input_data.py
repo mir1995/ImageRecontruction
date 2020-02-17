@@ -46,6 +46,9 @@ if __name__ == "__main__":
     import parameters
 
     sample_img = datasetMRI(parameters.Images.PATH_TRAINING)[20] 
-    plt.imshow(sample_img, cmap='gray')
+    #sample_img = np.asarray(sample_img, dtype="float32")
+    noisy = sample_img + 25*np.random.randn(256, 256)
+    print(noisy)
+    plt.imshow(noisy, cmap='gray')
     plt.show()
     plt.close('all')

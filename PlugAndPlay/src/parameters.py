@@ -20,7 +20,7 @@ class Images:
         # torchvision.transforms.RandomResizedCrop(64), # still not clear # i think it could be a disadvantage as much as an advantage especially for classification - obviously depending on the image
         torchvision.transforms.RandomHorizontalFlip(),
         torchvision.transforms.RandomVerticalFlip(),
-        torchvision.transforms.ToTensor()
+        torchvision.transforms.ToTensor() # maps a PIL grayscale image to [0,1]
     ])   # what does the normalisation do
     # torchvision.transforms.FiveCrop(size) # Crop the given PIL Image into four corners and the central crop
 

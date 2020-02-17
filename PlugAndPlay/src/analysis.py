@@ -74,8 +74,8 @@ if __name__ == "__main__":
         stats_writer.writerow(['TrainedNoiselLevel', 'TestNoiseLevel', 'MSE', 'VAR'])
 
         sigma = .1
-        for sigma_test in [0.1, 0.15, 0.2, 0.3]:
-            mean, var = getMSE(loader_test, net, sigma, torch.nn.MSELoss())
+        for sigma_test in [0.05, 0.1, 0.15, 0.2, 0.3]:
+            mean, var = getMSE(loader_test, net, sigma_test, torch.nn.MSELoss())
             stats_writer.writerow([sigma, sigma_test, mean, var ])
 
 

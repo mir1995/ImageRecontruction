@@ -65,7 +65,7 @@ if __name__ == "__main__":
     # don't know but has to do with the fact that DataParallel is used during training
     net = torch.nn.DataParallel(net)
     net.load_state_dict(torch.load(
-        parameters.Models.DCNN_256_005, map_location=torch.device('cpu')))
+        parameters.Models.DCNN_256_0050080101502, map_location=torch.device('cpu')))
 
     with open(STATS_FILE, 'a') as csv_file:
 
@@ -73,7 +73,7 @@ if __name__ == "__main__":
 
         #stats_writer.writerow(['TrainedNoiselLevel', 'TestNoiseLevel', 'MSE', 'VAR'])
 
-        sigma = 0.05
+        sigma = 'variable'
         for sigma_test in [0.05, 0.08, 0.1, 0.15, 0.2]:
             mean, var = getMSE(loader_test, net, sigma_test, torch.nn.MSELoss())
             stats_writer.writerow([sigma, sigma_test, mean, var ])

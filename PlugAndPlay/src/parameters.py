@@ -65,6 +65,13 @@ class Models:
     DCNN_256_008 = os.path.join(os.path.sep, os.path.dirname(
         os.path.dirname(os.path.abspath(__file__))), 'models', 'dncnn_256resolution_008noise.pth')
 
+class Data:
+
+    DENOISER_MSE = os.path.join(os.path.sep, os.path.dirname(
+        os.path.dirname(os.path.abspath(__file__))), 'data', 'stats', 'mse.csv')
+
+
+
 if __name__ == "__main__":
 
     print(Images.RESOLUTION)

@@ -114,7 +114,7 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
 
         print("[epoch %d]: average training loss: %.4f" %
               (epoch+1, loss_tot))
-    torch.save(net.state_dict(), parameters.Models.DCNN_256_0050080101502)
+    torch.save(net.state_dict(), parameters.Models.DCNN_256_00500801015)
 
     print('Finished Training')
 

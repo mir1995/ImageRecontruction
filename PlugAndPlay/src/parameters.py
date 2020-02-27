@@ -34,7 +34,7 @@ class Minimiser:
     NUMB_LAYERS = 10
 
     # Noise level
-    SIGMA = [0.05, 0.08, 0.1, 0.15, 0.2]
+    SIGMA = [0.05, 0.08, 0.1, 0.15]
 
     # number of dataset iterations
     EPOCHS = 20
@@ -59,7 +59,7 @@ class Models:
     DCNN_256_02 = os.path.join(os.path.sep, os.path.dirname(
         os.path.dirname(os.path.abspath(__file__))), 'models', 'dncnn_256resolution_02noise.pth')
 
-    DCNN_256_0050080101502 = os.path.join(os.path.sep, os.path.dirname(
+    DCNN_256_00500801015 = os.path.join(os.path.sep, os.path.dirname(
         os.path.dirname(os.path.abspath(__file__))), 'models', 'dncnn_256resolution_varnoise.pth')
 
     DCNN_256_008 = os.path.join(os.path.sep, os.path.dirname(

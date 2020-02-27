@@ -28,7 +28,7 @@ def getMSE(loader_test, net, sigma, criterion, numb_itrs = 10):
 
                 # forward + loss
                 out = net(data_noisy)
-                loss = criterion(out*255, data_true*255)
+                loss = criterion(out, data_true)/(criterion(data_true, 2*data_true))
 
                 # do not know what this does
                 # torch.nn.utils.clip_grad_norm_(net.parameters(), 1)
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     # don't know but has to do with the fact that DataParallel is used during training
     net = torch.nn.DataParallel(net)
     net.load_state_dict(torch.load(
-        parameters.Models.DCNN_256_0050080101502, map_location=torch.device('cpu')))
+        parameters.Models.DCNN_256_00500801015, map_location=torch.device('cpu')))
 
     with open(STATS_FILE, 'a') as csv_file:
 
@@ -74,7 +74,7 @@ if __name__ == "__main__":
         #stats_writer.writerow(['TrainedNoiselLevel', 'TestNoiseLevel', 'MSE', 'VAR'])
 
         sigma = 'variable'
-        for sigma_test in [0.05, 0.08, 0.1, 0.15, 0.2]:
+        for sigma_test in [0.05, 0.08, 0.1, 0.15]:
             mean, var = getMSE(loader_test, net, sigma_test, torch.nn.MSELoss())
             stats_writer.writerow([sigma, sigma_test, mean, var ])
 

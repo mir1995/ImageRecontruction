@@ -26,7 +26,7 @@ class datasetMRI(torch.utils.data.Dataset):
         img_true = Image.open(self.filenames[index])
 
         if self.resolution:
-            img_true.resize(self.resolution, Image.ANTIALIAS)
+            img_true = img_true.resize(self.resolution, Image.ANTIALIAS)
 
         if self.transform:
             img_true = self.transform(img_true)
@@ -45,10 +45,11 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
     import parameters
 
-    sample_img = datasetMRI(parameters.Images.PATH_TRAINING)[20] 
+    sample_img = datasetMRI(parameters.Images.PATH_TRAINING, transf=None, resolution=(300,300))[20] 
     #sample_img = np.asarray(sample_img, dtype="float32")
-    noisy = sample_img + 25*np.random.randn(256, 256)
-    print(noisy)
-    plt.imshow(noisy, cmap='gray')
+    #sample_img = sample_img + 20*np.random.randn(300, 300, 3)
+    print(sample_img)
+    #plt.imshow(sample_img.astype(np.uint8))
+    plt.imshow(sample_img)
     plt.show()
     plt.close('all')

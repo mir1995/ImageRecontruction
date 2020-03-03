@@ -6,13 +6,13 @@ import torchvision
 class Images:
 
     PATH_TRAINING = os.path.join(os.path.sep, os.path.dirname(
-        os.path.dirname(os.path.abspath(__file__))), 'data', 'training', '*.png')
+        os.path.dirname(os.path.abspath(__file__))), 'data', 'training', '*.jpg')
 
     PATH_TEST = os.path.join(os.path.sep, os.path.dirname(
-        os.path.dirname(os.path.abspath(__file__))), 'data', 'test', '*.png')
+        os.path.dirname(os.path.abspath(__file__))), 'data', 'test', '*.jpg')
 
     # when None it will train on the original resolution, ow pass in tuple (,) for desired resolution
-    RESOLUTION = None
+    RESOLUTION = (300,300)
 
     CHANNELS = 1
 

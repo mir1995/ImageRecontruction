@@ -16,7 +16,13 @@ print(input_.size())
 out.backward(input_)
 print(input_.grad)
 """
-
+import os
+import torch
+import torchvision
+from DNN import Net
+from input_data import datasetMRI
+import parameters
+import numpy as np
 
 def checkGPU(net):
     """
@@ -79,10 +85,11 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
             optimizer.zero_grad()
             # not sure of the following
             data_true = torch.autograd.Variable(  # does this turn the image in the same dimension of the network output??
-                data.type(Tensor), requires_grad=False)  # Keep initial data in memory ##
-            noise = sigma * torch.randn(data_true.shape).type(Tensor)
+                data.type(Tensor), requires_grad=False)  # Keep initial data in memory ## ?? should not this be set to true or is it false when dealing with pretrained models? or more simply not a parameter??
+            s = float(np.random.choice(sigma))
+            noise = s * torch.randn(data_true.shape).type(Tensor)
             # Create noisy data
-            data_noisy = data_true+noise
+            data_noisy = data_true + noise
 
             # forward + backward + optimize
             out = net(data_noisy)
@@ -104,23 +111,15 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
         loss_tot /= len(loader_train)
 
         # save model
-        torch.save(net.state_dict(), os.path.join(
-            checkpoints_folder, 'dncnn_toy_'+str(epoch)+'.pth'))
 
         print("[epoch %d]: average training loss: %.4f" %
               (epoch+1, loss_tot))
+    torch.save(net.state_dict(), parameters.Models.DCNN_256_00500801015)
 
     print('Finished Training')
 
 
 if __name__ == "__main__":
-
-    import os
-    import torch
-    import torchvision
-    from DNN import Net
-    from input_data import datasetMRI
-    import parameters
 
     # Load training dataset
     trainset = datasetMRI(parameters.Images.PATH_TRAINING,
@@ -134,6 +133,7 @@ if __name__ == "__main__":
     NET = Net(parameters.Images.CHANNELS,
               parameters.Minimiser.NUMB_FEAT_MAPS,
               parameters.Minimiser.NUMB_LAYERS)
+
 
     main(loader_train=LOADER_TRAIN,
          net=NET,

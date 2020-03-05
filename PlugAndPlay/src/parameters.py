@@ -19,9 +19,9 @@ class Images:
     TRANSFORM = torchvision.transforms.Compose([
         # torchvision.transforms.RandomResizedCrop(64), # still not clear # i think it could be a disadvantage as much as an advantage especially for classification - obviously depending on the image
         torchvision.transforms.RandomHorizontalFlip(),
+        torchvision.transforms.Grayscale(1),
         torchvision.transforms.RandomVerticalFlip(),
-        torchvision.transforms.ToTensor(), # maps a PIL grayscale image to [0,1]
-        torchvision.transforms.Grayscale(1)
+        torchvision.transforms.ToTensor() # maps a PIL grayscale image to [0,1]
     ])   # what coes the normalisation do
     # torchvision.transforms.FiveCrop(size) # Crop the given PIL Image into four corners and the central crop
 
@@ -35,10 +35,10 @@ class Minimiser:
     NUMB_LAYERS = 10
 
     # Noise level
-    SIGMA = 0.1
+    SIGMA = [0.1]
 
     # number of dataset iterations
-    EPOCHS = 20
+    EPOCHS = 10
 
     # training setup
     CRITERION = torch.nn.MSELoss()

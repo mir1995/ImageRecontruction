@@ -12,14 +12,15 @@ class Images:
         os.path.dirname(os.path.abspath(__file__))), 'data', 'test', '*.jpg')
 
     # when None it will train on the original resolution, ow pass in tuple (,) for desired resolution
-    RESOLUTION = (300,300)
+    RESOLUTION = None
 
     CHANNELS = 1
 
     TRANSFORM = torchvision.transforms.Compose([
         # torchvision.transforms.RandomResizedCrop(64), # still not clear # i think it could be a disadvantage as much as an advantage especially for classification - obviously depending on the image
-        torchvision.transforms.RandomHorizontalFlip(),
         torchvision.transforms.Grayscale(1),
+        torchvision.transforms.RandomHorizontalFlip(),
+        torchvision.transforms.RandomCrop(128, pad_if_needed = True),
         torchvision.transforms.RandomVerticalFlip(),
         torchvision.transforms.ToTensor() # maps a PIL grayscale image to [0,1]
     ])   # what coes the normalisation do
@@ -28,7 +29,7 @@ class Images:
 
 class Minimiser:
 
-    BATCH_SIZE = 9
+    BATCH_SIZE = 20
 
     NUMB_FEAT_MAPS = 32
 
@@ -38,7 +39,7 @@ class Minimiser:
     SIGMA = [0.1]
 
     # number of dataset iterations
-    EPOCHS = 10
+    EPOCHS = 20
 
     # training setup
     CRITERION = torch.nn.MSELoss()

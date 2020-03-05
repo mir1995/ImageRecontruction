@@ -2,7 +2,7 @@
 # Grid Engine options (lines prefixed with #$)
 #$ -N trainDNN              
 #$ -cwd                  
-#$ -l h_rt=00:30:00 
+#$ -l h_rt=00:50:00 
 #$ -l h_vmem=16G
 #  These options are:
 #  job name: -N

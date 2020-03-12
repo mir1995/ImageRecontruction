@@ -26,7 +26,7 @@ class datasetMRI(torch.utils.data.Dataset):
         img_true = Image.open(self.filenames[index])
 
         if self.resolution:
-            img_true.resize(self.resolution, Image.ANTIALIAS)
+            img_true = img_true.resize(self.resolution, Image.ANTIALIAS)
 
         if self.transform:
             img_true = self.transform(img_true)

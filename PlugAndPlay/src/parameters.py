@@ -12,7 +12,7 @@ class Images:
         os.path.dirname(os.path.abspath(__file__))), 'data', 'test', '*.png')
 
     # when None it will train on the original resolution, ow pass in tuple (,) for desired resolution
-    RESOLUTION = None
+    RESOLUTION = (256,256)
 
     CHANNELS = 1
 
@@ -23,6 +23,19 @@ class Images:
         torchvision.transforms.ToTensor() # maps a PIL grayscale image to [0,1]
     ])   # what does the normalisation do
     # torchvision.transforms.FiveCrop(size) # Crop the given PIL Image into four corners and the central crop
+
+
+class Parameters:
+
+    from DNN import Net
+
+    M = 12
+
+    net=Net()
+
+    KERNELS = list(net.parameters())[0:M//2] + list(net.parameters())[-M//2:]
+
+    CONVOLUTIONS = list(net.parameters())[M//2:-M//2]
 
 
 class Minimiser:
@@ -65,11 +78,14 @@ class Models:
     DCNN_256_008 = os.path.join(os.path.sep, os.path.dirname(
         os.path.dirname(os.path.abspath(__file__))), 'models', 'dncnn_256resolution_008noise.pth')
 
+class TRAINING_MODEL:
+
+    model = Models.DCNN_256_001
+
 class Data:
 
     DENOISER_MSE = os.path.join(os.path.sep, os.path.dirname(
         os.path.dirname(os.path.abspath(__file__))), 'data', 'stats', 'mse.csv')
-
 
 
 if __name__ == "__main__":

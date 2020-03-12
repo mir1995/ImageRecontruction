@@ -24,6 +24,7 @@ from input_data import datasetMRI
 import parameters
 import numpy as np
 
+
 def checkGPU(net):
     """
         Check GPU availability. 
@@ -60,12 +61,12 @@ def createCheckpoint():
     return checkpoints_folder
 
 
-def main(loader_train, net, sigma, epochs, criterion, optimizer):
+def main(loader_train, net, sigma, epochs, criterion, optimizer_kernels, optimizer_activation):
     """
     Train the network and save model after each epoch.
     Add some statistics (validation) to keep track of performance.
     """
-
+    
     # check availability GPU and return appropriate Tensor module?
     net, Tensor = checkGPU(net)
     # create folder to save model
@@ -87,8 +88,11 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
             data_true = torch.autograd.Variable(  # does this turn the image in the same dimension of the network output??
                 data.type(Tensor), requires_grad=False)  # Keep initial data in memory ## ?? should not this be set to true or is it false when dealing with pretrained models? or more simply not a parameter??
             s = float(np.random.choice(sigma))
-            complex_noise = np.random.normal(size = (256,256,2)).view(np.complex128).reshape((256,256))
-            noise = s * torch.from_numpy((np.fft.ifftshift(np.fft.fftshift(np.fft.fft2(complex_noise)))/n).reshape((256,256))).type(Tensor)
+            n = parameters.Images.RESOLUTION[0]
+            complex_noise = np.random.normal(size=(n, n, 2)).view(
+                np.complex128).reshape((n, n))
+            noise = s * torch.from_numpy((np.fft.ifftshift(np.fft.fftshift(
+                np.fft.fft2(complex_noise)))/n).reshape((n, n))).type(Tensor)
             #noise = s * torch.randn(data_true.shape).type(Tensor)
             # Create noisy data
             data_noisy = data_true + noise
@@ -96,13 +100,13 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
             # forward + backward + optimize
             out = net(data_noisy)
             loss = criterion(out, data_true)
-            loss.backward()
+            loss.backward()   # computes gradients w.r.t. everything but does not update
 
             # do not know what this does
             # torch.nn.utils.clip_grad_norm_(model.parameters(), 1)
 
-            # update weights
-            optimizer.step()
+            # update kernel weights only
+            optimizer_kernels.step()
 
             print("[epoch %d][%d/%d] loss: %.4f" %
                   (epoch+1, i+1, len(loader_train), loss.item()), end='\r')   # why isit not printing this one out?
@@ -116,7 +120,7 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
 
         print("[epoch %d]: average training loss: %.4f" %
               (epoch+1, loss_tot))
-    torch.save(net.state_dict(), parameters.Models.DCNN_256_001)
+    torch.save(net.state_dict(), parameters.TRAINING_MODEL.model)
 
     print('Finished Training')
 
@@ -136,10 +140,10 @@ if __name__ == "__main__":
               parameters.Minimiser.NUMB_FEAT_MAPS,
               parameters.Minimiser.NUMB_LAYERS)
 
-
     main(loader_train=LOADER_TRAIN,
          net=NET,
          sigma=parameters.Minimiser.SIGMA,
          epochs=parameters.Minimiser.EPOCHS,
          criterion=parameters.Minimiser.CRITERION,
-         optimizer= torch.optim.Adam(NET.parameters(), lr=1e-3)) # https://arxiv.org/pdf/1412.6980.pdf why have to pass in net.parameters
+         optimizer_kernels=torch.optim.SGD(parameters.Parameters.KERNELS),
+         optimizer_activation = torch.optim.SGD(parameters.Parameters.CONVOLUTIONS))  # https://arxiv.org/pdf/1412.6980.pdf why have to pass in net.parameters

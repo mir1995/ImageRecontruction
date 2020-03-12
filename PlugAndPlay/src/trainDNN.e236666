@@ -1,8 +1,0 @@
-WARNING: If you use conda to create environments, your home directory may fill up. Please see our documentation at 
- https://www.wiki.ed.ac.uk/display/ResearchServices/Anaconda for advice.
-Traceback (most recent call last):
-  File "./trainDNN.py", line 145, in <module>
-    optimizer= torch.optim.Adam(NET.parameters(), lr=1e-3)) # https://arxiv.org/pdf/1412.6980.pdf why have to pass in net.parameters
-  File "./trainDNN.py", line 91, in main
-    noise = s * torch.from_numpy((np.fft.ifftshift(np.fft.fftshift(np.fft.fft2(complex_noise)))/n).reshape((256,256))).type(Tensor)
-NameError: name 'n' is not defined

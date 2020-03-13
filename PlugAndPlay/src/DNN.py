@@ -62,8 +62,9 @@ class Net(torch.nn.Module):
             # operation
             output = self.linears[ix](psi_singletons[ix])
 
-            many, one=torch.split(output, d - 1, dim=1)
-
+            
+            many, one = torch.split(output, d - 1, dim=1)
+            
             psi_singletons.append(one)
 
             psi_many.append(many)
@@ -122,11 +123,16 @@ if __name__ == "__main__":
 
     net=Net()
     for name, param in net.state_dict().items():
-        print(name)
+        print(name, param)
 
-    print(list(net.parameters())[-6:])
+    print(net.linears[0])
+    net.linears[0].weight = torch.nn.Parameter(torch.tensor(0) * torch.rand(size = net.linears[0].weight.size()))
+    print(net.linears[0].weight)
+    #param = list(net.parameters())[0]
+    #print(param)
+    #print(list(net.parameters())[-6:])
     #print(list(net.parameters())[30].size())
-    print(len(list(net.parameters())[-6:]))
+    #print(len(list(net.parameters())[-6:]))
 
     # print(net)
     input_=torch.randn(1, 1, 256, 256, requires_grad=True)

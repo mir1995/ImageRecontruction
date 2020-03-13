@@ -12,7 +12,7 @@ class Images:
         os.path.dirname(os.path.abspath(__file__))), 'data', 'test', '*.png')
 
     # when None it will train on the original resolution, ow pass in tuple (,) for desired resolution
-    RESOLUTION = (256,256)
+    RESOLUTION = (26,26)
 
     CHANNELS = 1
 
@@ -25,17 +25,23 @@ class Images:
     # torchvision.transforms.FiveCrop(size) # Crop the given PIL Image into four corners and the central crop
 
 
-class Parameters:
+def getNetParameters(net = None):
 
     from DNN import Net
 
     M = 12
 
-    net=Net()
+    if net == None:
 
-    KERNELS = list(net.parameters())[0:M//2] + list(net.parameters())[-M//2:]
+        net=Net()
 
-    CONVOLUTIONS = list(net.parameters())[M//2:-M//2]
+    KERNELS_SIMO = list(net.parameters())[0:M//2]  
+
+    KERNELS_MISO = list(net.parameters())[-M//2:]
+
+    ACTIVATIONS = list(net.parameters())[M//2:-M//2]
+
+    return KERNELS_SIMO, KERNELS_MISO, ACTIVATIONS
 
 
 class Minimiser:
@@ -90,4 +96,4 @@ class Data:
 
 if __name__ == "__main__":
 
-    print(Images.RESOLUTION)
+    print(getNetParameters()[0][0].size())

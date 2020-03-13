@@ -12,7 +12,7 @@ class Images:
         os.path.dirname(os.path.abspath(__file__))), 'data', 'test', '*.png')
 
     # when None it will train on the original resolution, ow pass in tuple (,) for desired resolution
-    RESOLUTION = None
+    RESOLUTION = (256,256)
 
     CHANNELS = 1
 

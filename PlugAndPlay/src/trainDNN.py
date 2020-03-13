@@ -87,8 +87,9 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
             data_true = torch.autograd.Variable(  # does this turn the image in the same dimension of the network output??
                 data.type(Tensor), requires_grad=False)  # Keep initial data in memory ## ?? should not this be set to true or is it false when dealing with pretrained models? or more simply not a parameter??
             s = float(np.random.choice(sigma))
-            complex_noise = np.random.normal(size = (256,256,2)).view(np.complex128).reshape((256,256))
-            noise = s * torch.from_numpy((np.fft.ifftshift(np.fft.fftshift(np.fft.fft2(complex_noise)))/n).reshape((256,256))).type(Tensor)
+            N = parameters.Images.RESOLUTION[0]
+            complex_noise = np.random.normal(size = (N,N,2)).view(np.complex128).reshape((N,N))
+            noise = s * torch.from_numpy((np.fft.ifftshift(np.fft.fftshift(np.fft.fft2(complex_noise)))/N).reshape((N,N))).type(Tensor)
             #noise = s * torch.randn(data_true.shape).type(Tensor)
             # Create noisy data
             data_noisy = data_true + noise

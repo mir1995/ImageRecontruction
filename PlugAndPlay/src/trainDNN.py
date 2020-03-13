@@ -89,7 +89,7 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
             s = float(np.random.choice(sigma))
             N = parameters.Images.RESOLUTION[0]
             complex_noise = np.random.normal(size = (N,N,2)).view(np.complex128).reshape((N,N))
-            noise = s * torch.from_numpy((np.fft.ifftshift(np.fft.fftshift(np.fft.fft2(complex_noise)))/N).reshape((N,N))).type(Tensor)
+            noise = s * torch.from_numpy(np.real((np.fft.ifftshift(np.fft.fftshift(np.fft.fft2(complex_noise))))/N).reshape((N,N))).type(Tensor)
             #noise = s * torch.randn(data_true.shape).type(Tensor)
             # Create noisy data
             data_noisy = data_true + noise
@@ -117,7 +117,7 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
 
         print("[epoch %d]: average training loss: %.4f" %
               (epoch+1, loss_tot))
-    torch.save(net.state_dict(), parameters.Models.DCNN_256_001)
+    torch.save(net.state_dict(), parameters.Models.DCNN_256_01)
 
     print('Finished Training')
 

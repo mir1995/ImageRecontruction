@@ -25,7 +25,7 @@ def getLipschitzConstants(array, Dj):
 
 if __name__ == "__main__":
     
-    #net = loadModel(parameters.Models.DCNN_256_01_noproj)
+    #net = loadModel(parameters.Models.DCNN_256_01)
     net = DNN.Net()
     from DNN import init_weights
     net.apply(init_weights)
@@ -37,4 +37,4 @@ if __name__ == "__main__":
 
     #print(KERNELS_SIMO.shape)
 
-        getLipschitzConstants(KERNELS_SIMO, D[5 - j])
+        getLipschitzConstants(KERNELS_SIMO, D[5-j])

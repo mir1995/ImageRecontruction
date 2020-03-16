@@ -1,0 +1,8 @@
+WARNING: If you use conda to create environments, your home directory may fill up. Please see our documentation at 
+ https://www.wiki.ed.ac.uk/display/ResearchServices/Anaconda for advice.
+Traceback (most recent call last):
+  File "./trainDNN.py", line 197, in <module>
+    optimizer = torch.optim.SGD(NET.parameters(), lr=1e-6))  # https://arxiv.org/pdf/1412.6980.pdf why have to pass in net.parameters
+  File "./trainDNN.py", line 162, in main
+    loss_tot /= len(loader_train)
+ZeroDivisionError: float division by zero

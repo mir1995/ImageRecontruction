@@ -122,7 +122,7 @@ def init_weights(m):
     
     if type(m) == torch.nn.Conv2d:
         
-        torch.nn.init.uniform_(m.weight, a = 0.5, b = 0.8)
+        torch.nn.init.uniform_(m.weight, a = 0.2, b = 0.4)
       
 
 

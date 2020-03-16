@@ -12,7 +12,7 @@ class Images:
         os.path.dirname(os.path.abspath(__file__))), 'data', 'test', '*.png')
 
     # when None it will train on the original resolution, ow pass in tuple (,) for desired resolution
-    RESOLUTION = (26,26)
+    RESOLUTION = (256,256)
 
     CHANNELS = 1
 
@@ -70,6 +70,9 @@ class Models:
 
     DCNN_256_01 = os.path.join(os.path.sep, os.path.dirname(
         os.path.dirname(os.path.abspath(__file__))), 'models', 'dncnn_256resolution_01noise.pth')
+    DCNN_256_01_noproj = os.path.join(os.path.sep, os.path.dirname(
+        os.path.dirname(os.path.abspath(__file__))), 'models', 'dncnn_256resolution_01noproj.pth')
+
 
     DCNN_256_001 = os.path.join(os.path.sep, os.path.dirname(
         os.path.dirname(os.path.abspath(__file__))), 'models', 'dncnn_256resolution_001noise.pth')
@@ -88,7 +91,7 @@ class Models:
 
 class TRAINING_MODEL:
 
-    model = Models.DCNN_256_01
+    model = Models.DCNN_256_01_noproj
 
 class Data:
 

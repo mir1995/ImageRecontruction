@@ -22,12 +22,12 @@ class groupSort(torch.nn.Module):
         super(groupSort,self).__init__()
 
         # initialize alpha
-        if alpha == None:
-            self.alpha = torch.nn.Parameter(torch.rand(1)) # create a tensor out of alpha
-            self.beta = torch.nn.Parameter(torch.rand(1))
-        else:
-            self.alpha = torch.nn.Parameter(torch.tensor(alpha)) # create a tensor out of alpha
-            self.beta = torch.nn.Parameter(torch.tensor(alpha)) 
+        #if alpha == None:
+        #    self.alpha = torch.nn.Parameter(torch.rand(1)) # create a tensor out of alpha
+        #    self.beta = torch.nn.Parameter(torch.rand(1))
+        #else:
+        self.alpha = torch.nn.Parameter(alpha) # create a tensor out of alpha
+        self.beta = torch.nn.Parameter(beta) 
             
         self.alpha.requiresGrad = True # set requiresGrad to true!
         self.beta.requiresGrad = True # set requiresGrad to true!

@@ -1,7 +1,7 @@
 import torch 
 import numpy as np
 
-def projD(array, ax):
+def projD(array,ax):
 
     # (64, 1, 9, 9)
     # would we need to map the numpy back to the CPU??
@@ -16,7 +16,7 @@ def projD(array, ax):
     
     #norms = np.sqrt(np.sum(np.absolute(npA)**2, axis = 0))
     #print(norms.shape)
-    norms = np.expand_dims(norms,1) ##??
+    norms = np.expand_dims(norms,1)
     #print(norms.shape)
     normsM = np.repeat(norms, npA.shape[ax], axis = ax)  
    
@@ -45,7 +45,7 @@ def algorithm1(hbar_tensor, N, ax, Tensor):
     
     #print(k_t.size())
     
-    return torch.as_tensor(torch.tensor(h_t, requires_grad=True), device=torch.device('cpu')).type(Tensor) # should it not be k_t
+    return torch.as_tensor(torch.tensor(h_t, requires_grad=True), device=torch.device('cuda')).type(Tensor) # should it not be k_t
 
 
 
@@ -53,4 +53,4 @@ def algorithm1(hbar_tensor, N, ax, Tensor):
 if __name__ == "__main__":
     
     a = torch.rand(2,1,3,3)
-    print(algorithm1(a,10).size())
+    #print(algorithm1(a,10).size())

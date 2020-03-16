@@ -11,7 +11,7 @@ class relu(torch.nn.Module):
         - alpha - trainable parameter
     '''
     
-    def __init__(self, alpha = None):
+    def __init__(self, alpha):
         '''
         Initialization.
         INPUT:
@@ -22,10 +22,10 @@ class relu(torch.nn.Module):
         super(relu,self).__init__()
 
         # initialize alpha
-        if alpha == None:
-            self.alpha = torch.nn.Parameter(torch.rand(1)) # create a tensor out of alpha
-        else:
-            self.alpha = torch.nn.Parameter(torch.tensor(alpha)) # create a tensor out of alpha
+        #if alpha == None:
+        #    self.alpha = torch.nn.Parameter(torch.rand(1)) # create a tensor out of alpha
+        #else:
+        self.alpha = torch.nn.Parameter(alpha) # create a tensor out of alpha
             
         self.alpha.requiresGrad = True # set requiresGrad to true!
 

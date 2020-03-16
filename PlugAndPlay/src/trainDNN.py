@@ -39,7 +39,7 @@ def checkGPU(net):
         net.cuda()  # ? see Audrey's noteboook
 
         # not sure what this second part does
-        return torch.nn.DataParallel(net).cuda(), torch.cuda.FloatTensor
+        return net.cuda(), torch.cuda.FloatTensor
 
     else:
 
@@ -47,8 +47,14 @@ def checkGPU(net):
 
         # can stil parallelise on CPU?
         #torch.nn.DataParallel(net)  ## mm check what u use to do with loading the
+<<<<<<< HEAD
         return net, torch.FloatTensor
 
+=======
+        print('yes')
+        return net, torch.FloatTensor
+        
+>>>>>>> 5f46594d8ffbe79cfe91d23f75277012cd6eb0a6
 
 def createCheckpoint():
     """
@@ -89,6 +95,11 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
             # not sure of the following
             data_true = torch.autograd.Variable(  # does this turn the image in the same dimension of the network output??
                 data.type(Tensor), requires_grad=False)  # Keep initial data in memory ## ?? should not this be set to true or is it false when dealing with pretrained models? or more simply not a parameter??
+<<<<<<< HEAD
+=======
+            
+
+>>>>>>> 5f46594d8ffbe79cfe91d23f75277012cd6eb0a6
             s = float(np.random.choice(sigma))
 
             ############### NO FOURIER TRANSFORM AT THE MOMENT
@@ -98,7 +109,11 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
             #noise = s * torch.from_numpy((np.fft.ifftshift(np.fft.fftshift(      # perhaps avoid this for the moment     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
             #    np.fft.fft2(complex_noise)))/n).reshape((n, n))).type(Tensor)
             
+<<<<<<< HEAD
             
+=======
+            # set seed here
+>>>>>>> 5f46594d8ffbe79cfe91d23f75277012cd6eb0a6
             noise = s * torch.randn(data_true.shape).type(Tensor)
             
             
@@ -113,13 +128,50 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
             # torch.nn.utils.clip_grad_norm_(model.parameters(), 1)
 
             ######################################## SGD  - there should be no need of doing optimisation w.r.t. a set of parameters
+<<<<<<< HEAD
             
             # 0) Get current kernels
             h_SGD_prvs = parameters.getNetParameters(net)[0] # careful which dimension you pick
             h_SGD2_prvs = parameters.getNetParameters(net)[1] # careful which dimension you pick
 
+=======
+            """
+            # 0) Get current kernels
+            h_SGD_prvs = parameters.getNetParameters(net)[0] # careful which dimension you pick
+            h_SGD2_prvs = parameters.getNetParameters(net)[1]
+            """
+>>>>>>> 5f46594d8ffbe79cfe91d23f75277012cd6eb0a6
             # 1) update kernel weights 
             optimizer.step()
+            """
+            # 2) get SGD updates kernels and concatenate them across dimension 0 - ask Iain what input he expects
+            #h_SGD = parameters.getNetParameters(net)[0]  # to check it does what i expect
+            h_SGD2 = parameters.getNetParameters(net)[1]
+            # 3) project update kernels 
+            u_t = 0.00001
+            itrs = 20
+
+            diff = [h_SGD[i] + u_t * (h_SGD[i] - h_SGD_prvs[i]) for i in range(len(h_SGD))]
+            h_SGD = list(map(lambda kernel: projection.algorithm1(kernel, itrs, 0, Tensor),diff))
+            
+            diff2 = [h_SGD2[i] + u_t * (h_SGD2[i] - h_SGD2_prvs[i]) for i in range(len(h_SGD2))]
+            h_SGD2 = list(map(lambda kernel: projection.algorithm1(kernel, itrs, 1, Tensor),diff2))
+
+            # 4) substitute kernel parameters with output of projection
+            count = 0
+            # with torch.no_grad(): 
+            for kernel in h_SGD:
+                net.linears[count].weight = torch.nn.Parameter(kernel, requires_grad = True)
+                count += 1
+            
+            count2 = 0
+            #with torch.no_grad(): 
+            for kernel in h_SGD2:
+
+                net.linears[- 6 + count2].weight = torch.nn.Parameter(kernel, requires_grad = True)
+                count2 += 1
+            """
+            ####################################### SGD
 
             # 2) get SGD updates kernels and concatenate them across dimension 0 - ask Iain what input he expects
             h_SGD = parameters.getNetParameters(net)[0]  # to check it does what i expect
@@ -164,7 +216,11 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
 
         print("[epoch %d]: average training loss: %.4f" %
               (epoch+1, loss_tot))
+<<<<<<< HEAD
     torch.save(net.state_dict(), parameters.TRAINING_MODEL.model)
+=======
+        torch.save(net.state_dict(), parameters.TRAINING_MODEL.model)
+>>>>>>> 5f46594d8ffbe79cfe91d23f75277012cd6eb0a6
 
     print('Finished Training')
 
@@ -181,6 +237,15 @@ if __name__ == "__main__":
     ##################### PARAMETERS #####################
     # initialise network
     NET = Net()
+<<<<<<< HEAD
+=======
+    # set torch seeds
+    torch.manual_seed(0)
+    np.random.seed(0) 
+    
+    from DNN import init_weights
+    NET.apply(init_weights)
+>>>>>>> 5f46594d8ffbe79cfe91d23f75277012cd6eb0a6
 
     
     main(loader_train=LOADER_TRAIN,
@@ -188,4 +253,8 @@ if __name__ == "__main__":
          sigma=parameters.Minimiser.SIGMA,
          epochs=parameters.Minimiser.EPOCHS,
          criterion=parameters.Minimiser.CRITERION,
+<<<<<<< HEAD
          optimizer = torch.optim.SGD(NET.parameters(), lr=1e-2))  # https://arxiv.org/pdf/1412.6980.pdf why have to pass in net.parameters
+=======
+         optimizer = torch.optim.SGD(NET.parameters(), lr=1e-6))  # https://arxiv.org/pdf/1412.6980.pdf why have to pass in net.parameters
+>>>>>>> 5f46594d8ffbe79cfe91d23f75277012cd6eb0a6

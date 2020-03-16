@@ -11,21 +11,30 @@ def loadModel(model_path):
 
     return model
 
-def getLipschitzConstants(array):
+def getLipschitzConstants(array, Dj):
 
-    tr = [np.reshape(array[i,...], (9,9)) for i in range(64)]
+    tr = [np.reshape(array[:,i,...], (int(np.sqrt(Dj)) + 1,int(np.sqrt(Dj)) + 1)) for i in range(Dj)]
+    
+    out = np.zeros(len(tr))
+    for i in range(len(tr)):
+    
+        out[i] = np.max(np.linalg.eigvals(np.matmul(tr[i].T, tr[i])))
 
-    tr = [np.max(np.linalg.eigvals(np.matmul(m.T, m))) for m in tr]
-
-    print (*tr)
+    print (np.mean(out), np.max(out), '\n')
 
 
 if __name__ == "__main__":
     
-    net = loadModel(parameters.Models.DCNN_256_01)
+    #net = loadModel(parameters.Models.DCNN_256_01)
+    net = DNN.Net()
+    from DNN import init_weights
+    net.apply(init_weights)
+    D = [64,64,16,16,4,4]
 
-    KERNELS_SIMO = parameters.getNetParameters(net)[0][0].clone().detach().cpu().numpy()
+    for j in range(6):
 
-    print(KERNELS_SIMO.shape)
+        KERNELS_SIMO = parameters.getNetParameters(net)[1][j].clone().detach().cpu().numpy()
 
-    getLipschitzConstants(KERNELS_SIMO)
+    #print(KERNELS_SIMO.shape)
+
+        getLipschitzConstants(KERNELS_SIMO, D[5-j])

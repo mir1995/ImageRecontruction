@@ -118,16 +118,22 @@ class Net(torch.nn.Module):
         return self.linears[ix](x, z)
 
 
+def init_weights(m):
+    
+    if type(m) == torch.nn.Conv2d:
+        
+        torch.nn.init.uniform_(m.weight, a = 0.2, b = 0.4)
+      
+
 
 if __name__ == "__main__":
 
     net=Net()
+    net.apply(init_weights)
     for name, param in net.state_dict().items():
         print(name, param)
 
-    print(net.linears[0])
-    net.linears[0].weight = torch.nn.Parameter(torch.tensor(0) * torch.rand(size = net.linears[0].weight.size()))
-    print(net.linears[0].weight)
+
     #param = list(net.parameters())[0]
     #print(param)
     #print(list(net.parameters())[-6:])

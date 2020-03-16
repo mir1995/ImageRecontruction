@@ -116,27 +116,40 @@ def main(loader_train, net, sigma, epochs, criterion, optimizer):
             
             # 0) Get current kernels
             h_SGD_prvs = parameters.getNetParameters(net)[0] # careful which dimension you pick
+            h_SGD2_prvs = parameters.getNetParameters(net)[1] # careful which dimension you pick
 
             # 1) update kernel weights 
             optimizer.step()
 
             # 2) get SGD updates kernels and concatenate them across dimension 0 - ask Iain what input he expects
             h_SGD = parameters.getNetParameters(net)[0]  # to check it does what i expect
+            h_SGD2 = parameters.getNetParameters(net)[1]
 
             # 3) project update kernels 
             u_t = 0.00001
             itrs = 20
+
             diff = [h_SGD[i] + u_t * (h_SGD[i] - h_SGD_prvs[i]) for i in range(len(h_SGD))]
-            h_SGD = list(map(lambda kernel: projection.algorithm1(kernel, itrs, Tensor),diff))
+            h_SGD = list(map(lambda kernel: projection.algorithm1(kernel, itrs, 0, Tensor),diff))
+
+            diff2 = [h_SGD2[i] + u_t * (h_SGD2[i] - h_SGD2_prvs[i]) for i in range(len(h_SGD2))]
+            h_SGD2 = list(map(lambda kernel: projection.algorithm1(kernel, itrs, 1, Tensor),diff2))
 
             # 4) substitute kernel parameters with output of projection
             count = 0
-            with torch.no_grad(): 
-                for kernel in h_SGD:
+            #with torch.no_grad(): 
+            for kernel in h_SGD:
 
-                    net.linears[count].weight = torch.nn.Parameter(kernel)
-                    count += 1
-            
+                net.linears[count].weight = torch.nn.Parameter(kernel, requires_grad = True)
+                count += 1
+
+            count2 = 0
+            #with torch.no_grad(): 
+            for kernel in h_SGD2:
+
+                net.linears[- 6 + count2].weight = torch.nn.Parameter(kernel, requires_grad = True)
+                count2 += 1
+        
             ####################################### SGD
 
             print("[epoch %d][%d/%d] loss: %.4f" %

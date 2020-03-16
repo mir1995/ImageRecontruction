@@ -53,10 +53,10 @@ class Minimiser:
     NUMB_LAYERS = 10
 
     # Noise level
-    SIGMA = [0.01]
+    SIGMA = [0.1]
 
     # number of dataset iterations
-    EPOCHS = 20
+    EPOCHS = 10
 
     # training setup
     CRITERION = torch.nn.MSELoss()
@@ -68,6 +68,8 @@ class Models:
     DCNN_256_005 = os.path.join(os.path.sep, os.path.dirname(
         os.path.dirname(os.path.abspath(__file__))), 'models', 'dncnn_256resolution_005noise.pth')
 
+    DCNN_256_01 = os.path.join(os.path.sep, os.path.dirname(
+        os.path.dirname(os.path.abspath(__file__))), 'models', 'dncnn_256resolution_01noise.pth')
 
     DCNN_256_001 = os.path.join(os.path.sep, os.path.dirname(
         os.path.dirname(os.path.abspath(__file__))), 'models', 'dncnn_256resolution_001noise.pth')
@@ -86,7 +88,7 @@ class Models:
 
 class TRAINING_MODEL:
 
-    model = Models.DCNN_256_001
+    model = Models.DCNN_256_01
 
 class Data:
 

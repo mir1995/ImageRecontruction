@@ -22,7 +22,7 @@ def getLipschitzConstants(array):
 
 if __name__ == "__main__":
     
-    net = loadModel(parameters.Models.DCNN_256_001)
+    net = loadModel(parameters.Models.DCNN_256_01)
 
     KERNELS_SIMO = parameters.getNetParameters(net)[0][0].clone().detach().cpu().numpy()
 
